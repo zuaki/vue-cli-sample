@@ -1,20 +1,32 @@
 /**
- * 日付操作ユーティリティ。
+ * 日付操作ユーティリティ
  */
 export class DateUtility {
+  /**
+   * 年月日を文字列型で返す
+   * 形式はyyyy-mm-dd
+   * @param day 日時
+   */
+  public static createFullDateString(day: Date): string {
+    const year: string = this.createYearString(day);
+    const month: string = this.createMonthString(day);
+    const date: string = this.createDateString(day);
+
+    return `${year}-${month}-${date}`;
+  }
 
   /**
-   * 年を文字列型で返す。
-   * @param day 日時。
+   * 年を文字列型で返す
+   * @param day 日時
    */
   public static createYearString(day: Date) {
     return day.getFullYear().toString();
   }
 
   /**
-   * 月を文字列型で返す。
-   * 1桁の場合は頭に0埋めする。
-   * @param day 日時。
+   * 月を文字列型で返す
+   * 1桁の場合は頭に0埋めする
+   * @param day 日時
    */
   public static createMonthString(day: Date) {
     const month = day.getMonth() + 1;
@@ -28,9 +40,9 @@ export class DateUtility {
   }
 
   /**
-   * 日を文字列型で返す。
-   * 1桁の場合は頭に0埋めする。
-   * @param day 日時。
+   * 日を文字列型で返す
+   * 1桁の場合は頭に0埋めする
+   * @param day 日時
    */
   public static createDateString(day: Date) {
     const date = day.getDate();
@@ -44,9 +56,9 @@ export class DateUtility {
   }
 
   /**
-   * 時を文字列型で返す。
-   * 1桁の場合は頭に0埋めする。
-   * @param day 日時。
+   * 時を文字列型で返す
+   * 1桁の場合は頭に0埋めする
+   * @param day 日時
    */
   public static createHoursString(day: Date) {
     const hours = day.getHours();
@@ -60,9 +72,9 @@ export class DateUtility {
   }
 
   /**
-   * 分を文字列型で返す。
-   * 1桁の場合は頭に0埋めする。
-   * @param day 日時。
+   * 分を文字列型で返す
+   * 1桁の場合は頭に0埋めする
+   * @param day 日時
    */
   public static createMinutesString(day: Date) {
     const minutes = day.getMinutes();
@@ -76,9 +88,9 @@ export class DateUtility {
   }
 
   /**
-   * 秒を文字列型で返す。
-   * 1桁の場合は頭に0埋めする。
-   * @param day 日時。
+   * 秒を文字列型で返す
+   * 1桁の場合は頭に0埋めする
+   * @param day 日時
    */
   public static createSecondsString(day: Date) {
     const seconds = day.getSeconds();

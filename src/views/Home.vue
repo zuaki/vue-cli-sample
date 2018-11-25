@@ -1,5 +1,5 @@
 <template lang="pug">
-  div.home
+  div#home
     img(alt="Vue logo" src="../assets/logo.png")
     // #topic
     // 子コンポーネントのpropsのプロパティ名がmyMessageなら、「my-message」として渡す必要がある
@@ -26,3 +26,8 @@ export default class Home extends Vue {
   private myMessage: string = 'Hello World';
 }
 </script>
+
+<style scoped lang="sass">
+#home
+  text-align: center
+</style>

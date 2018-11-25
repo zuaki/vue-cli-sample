@@ -32,8 +32,7 @@ export default {
         return [];
       },
     },
-    // Googleカレンダー等の他カレンダーAPIとの連携時に使用する
-    // 使用したい場合は以下を参照
+    // 以下を参照
     // http://blog.eszett-design.com/2012/08/fullcalendar.html
     eventSources: {
       default() {
@@ -48,6 +47,11 @@ export default {
     },
     // 要素の選択の有効/無効
     selectable: {
+      default() {
+        return true;
+      },
+    },
+    editable: {
       default() {
         return true;
       },
@@ -101,9 +105,21 @@ export default {
       type: Object,
       default() {
         return {
-          // ロケーション
-          locale: ja,
         };
+      },
+    },
+    // CSS調整用 追加対象CSSクラス
+    addCssClass: {
+      type: Array,
+      default() {
+        return [];
+      },
+    },
+    // CSS調整用 削除対象CSSクラス
+    removeCssClass: {
+      type: Array,
+      default() {
+        return [];
       },
     },
   },
@@ -120,6 +136,7 @@ export default {
         selectable: this.selectable,
         selectHelper: this.selectHelper,
         aspectRatio: 2,
+        editable: this.editable,
         timeFormat: 'HH:mm',
         events: this.events,
         eventSources: this.eventSources,
@@ -144,6 +161,7 @@ export default {
           }
         },
 
+        // 予定要素のクリックイベント処理
         eventClick(...args) {
           self.$emit('event-selected', ...args);
         },
@@ -158,6 +176,14 @@ export default {
 
         eventResize(...args) {
           self.$emit('event-resize', ...args);
+        },
+
+        eventDragStart(...args) {
+          self.$emit('event-drag-start', ...args);
+        },
+
+        eventDragStop(...args) {
+          self.$emit('event-drag-stop', ...args);
         },
 
         // 日付要素のクリックイベント処理
@@ -186,11 +212,13 @@ export default {
   },
 
   /**
-   * カレンダーのマウント
+   * vue mounted
    */
   mounted() {
     const cal = $(this.$el);
-    self = this;
+    // ここでselfにthisを代入すると、webpackのclient.jsでsendMsg()の処理でself.postMessage()がこけるのでコメントアウト
+    // さらに、mounted()内でselfは使わない
+    // self = this;
 
     this.$on('remove-event', (event) => {
       if (event && event.hasOwnProperty('id')) {
@@ -224,10 +252,40 @@ export default {
       });
     });
 
+    // カレンダーのhtmlが作られるのはcal.fullCalendar()
+    // 表示状態でカレンダーが作られると、後続処理のCSS調整で瞬間的にチラつきが発生するので、
+    // 非表示状態でカレンダーを作る
+    $('#calendar').hide();
     cal.fullCalendar(defaultsDeep(this.config, this.defaultConfig));
+
+    // CSS調整 CSSクラス追加
+    for (const rm of this.removeCssClass) {
+      $(rm.selector).removeClass(rm.class);
+    }
+
+    // CSS調整 CSSクラス削除
+    for (const add of this.addCssClass) {
+      $(add.selector).addClass(add.class);
+    }
+
+    // CSS調整が終わったのでカレンダーを表示する
+    $('#calendar').show();
   },
 
+  /**
+   * vue methods
+   */
   methods: {
+    /**
+     * 親コンポーネントからこのメソッドを呼び出すことでfullcalendarの処理呼び出しを行えるようにする
+     * 親コンポーネントから
+     * <Calendar ref="calendar" />
+     * と定義したカレンダーに対してビジネスロジックで
+     * this.$refs.calendar.fireMethod('next')
+     * と呼び出す
+     *
+     * TODO Typescript化してから実験する
+     */
     fireMethod(...options) {
       return $(this.$el).fullCalendar(...options);
     },
@@ -278,8 +336,4 @@ export default {
 // node_modulesのCSSを使用する場合はimportで対応する。
 @import '../../node_modules/fullcalendar/dist/fullcalendar.css'
 @import '../../node_modules/@fortawesome/fontawesome-free/css/all.css'
-#calendar
-  margin-left: auto
-  margin-right: auto
-  width: 1024px
 </style>
