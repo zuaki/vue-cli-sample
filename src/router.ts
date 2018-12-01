@@ -1,6 +1,7 @@
 import Vue from 'vue';
 import Router from 'vue-router';
-import UserSetting from './views/Home.vue';
+import { UrlConstants as Url } from '@/constants/Url';
+import UserSetting from './views/UserSetting.vue';
 import WorkTimeInput from './views/WorkTimeInput.vue';
 import Login from './views/Login.vue';
 Vue.use(Router);
@@ -10,19 +11,25 @@ export default new Router({
   base: process.env.BASE_URL,
   routes: [
     {
-      path: '/',
+      path: Url.root,
+      name: 'root',
+      redirect: Url.login,
+    },
+    {
+      path: Url.login,
+      name: 'login',
+      component: Login,
+      meta: { isPublic: true },
+    },
+    {
+      path: Url.worktime,
       name: 'worktime',
       component: WorkTimeInput,
     },
     {
-      path: '/usersetting',
+      path: Url.userSetting,
       name: 'usersetting',
       component: UserSetting,
-    },
-    {
-      path: '/login',
-      name: 'login',
-      component: Login,
     },
   ],
 });

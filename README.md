@@ -104,3 +104,9 @@ VSCode だと設定-拡張機能-prettier から「Single Quote」を有効、
 ### vue ファイルかつ、lang 指定のものはフォーマッターが効かない？
 
 prettier は vue サポートしていない
+
+## TODO
+
+### レスポンシブ対応
+
+スマホ表示時の考慮

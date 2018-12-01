@@ -1,5 +1,5 @@
 <template lang="pug">
-  div#calendar(ref="calendar")
+  #calendar(ref="calendar")
 </template>
 
 <script>
@@ -333,7 +333,7 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="sass">
 // #topic
-// node_modulesのCSSを使用する場合はimportで対応する。
+// node_modulesのCSSを使用したい場合はimportで対応する。
 @import '../../node_modules/fullcalendar/dist/fullcalendar.css'
 @import '../../node_modules/@fortawesome/fontawesome-free/css/all.css'
 </style>
