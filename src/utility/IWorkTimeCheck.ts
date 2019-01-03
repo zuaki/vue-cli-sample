@@ -1,5 +1,5 @@
-import { Event } from '@/model/Event';
-import { WorkTimeCheckError } from '@/model/WorkTimeCheckError';
+import { Event } from "@/model/Event";
+import { WorkTimeCheckError } from "@/model/WorkTimeCheckError";
 
 /**
  * 勤怠チェック機能インターフェース

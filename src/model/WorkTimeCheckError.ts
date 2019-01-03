@@ -1,4 +1,4 @@
-import { Event } from '@/model/Event';
+import { Event } from "@/model/Event";
 
 /**
  * 勤怠チェックエラー

@@ -32,7 +32,7 @@ export class DateUtility {
     const month = day.getMonth() + 1;
     let monthStr: string;
     if (month.toString().length === 1) {
-      monthStr = '0' + month.toString();
+      monthStr = "0" + month.toString();
     } else {
       monthStr = month.toString();
     }
@@ -48,7 +48,7 @@ export class DateUtility {
     const date = day.getDate();
     let dateStr: string;
     if (date.toString().length === 1) {
-      dateStr = '0' + date.toString();
+      dateStr = "0" + date.toString();
     } else {
       dateStr = date.toString();
     }
@@ -64,7 +64,7 @@ export class DateUtility {
     const hours = day.getHours();
     let hoursStr: string;
     if (hours.toString().length === 1) {
-      hoursStr = '0' + hours.toString();
+      hoursStr = "0" + hours.toString();
     } else {
       hoursStr = hours.toString();
     }
@@ -80,7 +80,7 @@ export class DateUtility {
     const minutes = day.getMinutes();
     let minutesStr: string;
     if (minutes.toString().length === 1) {
-      minutesStr = '0' + minutes.toString();
+      minutesStr = "0" + minutes.toString();
     } else {
       minutesStr = minutes.toString();
     }
@@ -96,7 +96,7 @@ export class DateUtility {
     const seconds = day.getSeconds();
     let secondsStr: string;
     if (seconds.toString().length === 1) {
-      secondsStr = '0' + seconds.toString();
+      secondsStr = "0" + seconds.toString();
     } else {
       secondsStr = seconds.toString();
     }

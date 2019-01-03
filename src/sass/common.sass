@@ -5,6 +5,7 @@
 /* サイズ */
 // 各コンテンツの最大横幅定義
 $contentsMaxWidth: 1240px
+$contentsHalfWidth: 620px
 
 /* カラー(使用したい色が増えてきた場合はBOOTSTRAPのSCSSコンパイルを検討する！) */
 $bt-primary-color: #367fa9
@@ -19,6 +20,13 @@ $base-bg-color: #fff
 @mixin common-contents
   margin-top: 2rem
   max-width: $contentsMaxWidth
+  margin-left: auto
+  margin-right: auto
+
+// 実際のコンテンツ領域で使用する
+@mixin common-contents-half
+  margin-top: 2rem
+  max-width: $contentsHalfWidth
   margin-left: auto
   margin-right: auto
 

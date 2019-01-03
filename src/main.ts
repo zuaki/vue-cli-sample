@@ -1,13 +1,13 @@
-import Vue from 'vue';
-import { Route } from 'vue-router';
-import App from './App.vue';
-import router from './router';
-import store from './store';
-import './registerServiceWorker';
+import Vue from "vue";
+import { Route } from "vue-router";
+import App from "./App.vue";
+import router from "./router";
+import store from "./store";
+import "./registerServiceWorker";
 // #topic
 // jQueryやBootstrap等、画面全体に読込ませなくてはいけないものはここでimportする必要がある
-import 'jquery';
-import 'bootstrap';
+import "jquery";
+import "bootstrap";
 
 // 画面遷移前のルーターによるフック
 // ログイン認証前はログイン画面へ遷移するようにルーターでフックする
@@ -18,7 +18,7 @@ router.beforeEach((to: Route, from: Route, next: any) => {
     !store.state.loggedIn
   ) {
     next({
-      path: '/login',
+      path: "/login",
       query: { redirect: to.fullPath },
     });
   } else {
@@ -32,4 +32,4 @@ new Vue({
   router,
   store,
   render: (h) => h(App),
-}).$mount('#app');
+}).$mount("#app");

@@ -2,261 +2,122 @@
   #calendar(ref="calendar")
 </template>
 
-<script>
-import defaultsDeep from 'lodash.defaultsdeep';
-import 'fullcalendar';
-import $ from 'jquery';
-import ja from 'fullcalendar/dist/locale/ja';
+<script lang="ts">
+import { Component, Prop, Watch, Emit, Vue } from "vue-property-decorator";
 
-/**
- * コンポーネントの定義
- * TypeScriptとの比較を理解するために、JavaScriptで書く
- */
-export default {
+import defaultsDeep from "lodash.defaultsdeep";
+import "fullcalendar";
+import "fullcalendar/dist/locale/ja";
+
+@Component
+export default class Calendar extends Vue {
 
   /**
-   * propsは呼び出し元から渡すことのできる値の定義。
-   * 呼び出し元でtemplateに<Calendar :defaultView="day">のように書くことで、propsの各プロパティに値を渡すことができる
-   *
    * 基本的にfullcalendarの設定で使用するものをpropsで受け取れるようにしている
    * そのため、各プロパティの意味については以下を参照
    * https://fullcalendar.io/docs#toc
    */
-  props: {
-    // 表示するイベント(予定)
-    // イベント情報は配列やjson等の方法で渡すことが可能
-    // 以下を参照
-    // https://fullcalendar.io/docs/event-data
-    events: {
-      default() {
-        return [];
-      },
-    },
-    // 以下を参照
-    // http://blog.eszett-design.com/2012/08/fullcalendar.html
-    eventSources: {
-      default() {
-        return [];
-      },
-    },
-    // カレンダー上のイベント(予定)変更の有効/無効
-    editable: {
-      default() {
-        return true;
-      },
-    },
-    // 要素の選択の有効/無効
-    selectable: {
-      default() {
-        return true;
-      },
-    },
-    editable: {
-      default() {
-        return true;
-      },
-    },
-    // 要素のドラッグ時にイベントをフックするHelperの有効/無効
-    selectHelper: {
-      default() {
-        return true;
-      },
-    },
-    // ヘッダー部の設定
-    header: {
-      default() {
-        return {
-          left: 'title',
-          center: '',
-          right: 'today prev,next',
-        };
-      },
-    },
-    // フッター部の設定
-    footer: {
-      type: Object,
-      default() {
-        return {};
-      },
-    },
-    // カスタムボタン
-    customButtons: {
-      type: Object,
-      default() {
-        return {};
-      },
-    },
-    // 初期表示の形式
-    defaultView: {
-      type: String,
-      default() {
-        // month, agendaWeek, listWeek, basicWeek, timelineDay, agendaDay
-        return 'month';
-      },
-    },
-    // TODO 未調査
-    sync: {
-      default() {
-        return false;
-      },
-    },
-    // その他設定情報
-    config: {
-      type: Object,
-      default() {
-        return {
-        };
-      },
-    },
-    // CSS調整用 追加対象CSSクラス
-    addCssClass: {
-      type: Array,
-      default() {
-        return [];
-      },
-    },
-    // CSS調整用 削除対象CSSクラス
-    removeCssClass: {
-      type: Array,
-      default() {
-        return [];
-      },
-    },
-  },
+  // #topic
+  // propのデフォルト値は定義した際に格納するのではなく、@Prop()に{default: "default value"}として書く
+  // こうしないと親コンポーネントから渡された値が上書きされてしまう
+  @Prop({ default: [] })
+  private events!: any[];
+  // http://blog.eszett-design.com/2012/08/fullcalendar.html
+  @Prop({ default: [] })
+  private eventSources!: any[];
+  // カレンダー上のイベント(予定)変更の有効/無効
+  @Prop({ default: true })
+  private editable!: boolean;
+  // 要素の選択の有効/無効
+  @Prop({ default: true })
+  private selectable!: boolean;
+  // 要素のドラッグ時にイベントをフックするHelperの有効/無効
+  @Prop({ default: true })
+  private selectHelper!: boolean;
+  // ヘッダー部の設定
+  @Prop({ default: { left: "title", center: "", right: "today prev,next" } })
+  private header!: any;
+  // フッター部の設定
+  @Prop({ default: {} })
+  private footer!: any;
+  // カスタムボタンの設定
+  @Prop({ default: {} })
+  private customButtons!: any;
+  // 初期表示の形式
+  // month, agendaWeek, listWeek, basicWeek, timelineDay, agendaDay
+  @Prop({ default: "month" })
+  private defaultView!: string;
+  // TODO 未調査
+  @Prop({ default: false })
+  private sync!: boolean;
+  // その他設定情報
+  @Prop({ default: {} })
+  private config!: object;
+  // CSS調整用 追加対象CSSクラス
+  @Prop({ default: [] })
+  private addCssClass!: any[];
+  // CSS調整用 削除対象CSSクラス
+  @Prop({ default: [] })
+  private removeCssClass!: any[];
 
-  computed: {
-    defaultConfig() {
-      const self = this;
-      return {
-        header: this.header,
-        footer: this.footer,
-        customButtons: this.customButtons,
-        defaultView: this.defaultView,
-        editable: this.editable,
-        selectable: this.selectable,
-        selectHelper: this.selectHelper,
-        aspectRatio: 2,
-        editable: this.editable,
-        timeFormat: 'HH:mm',
-        events: this.events,
-        eventSources: this.eventSources,
-
-        eventRender(...args) {
-          if (this.sync) {
-            self.events = cal.fullCalendar('clientEvents');
-          }
-          self.$emit('event-render', ...args);
-        },
-
-        viewRender(...args) {
-          if (this.sync) {
-            self.events = cal.fullCalendar('clientEvents');
-          }
-          self.$emit('view-render', ...args);
-        },
-
-        eventDestroy(event) {
-          if (this.sync) {
-            self.events = cal.fullCalendar('clientEvents');
-          }
-        },
-
-        // 予定要素のクリックイベント処理
-        eventClick(...args) {
-          self.$emit('event-selected', ...args);
-        },
-
-        eventDrop(...args) {
-          self.$emit('event-drop', ...args);
-        },
-
-        eventReceive(...args) {
-          self.$emit('event-receive', ...args);
-        },
-
-        eventResize(...args) {
-          self.$emit('event-resize', ...args);
-        },
-
-        eventDragStart(...args) {
-          self.$emit('event-drag-start', ...args);
-        },
-
-        eventDragStop(...args) {
-          self.$emit('event-drag-stop', ...args);
-        },
-
-        // 日付要素のクリックイベント処理
-        // #topic
-        // 親コンポーネントから渡されたdayClick()をコールする
-        // 親コンポーネントから@day-click="dayClick"でメソッドを渡さないといけないので注意
-        dayClick(...args) {
-          // #topic
-          // 「...args」は可変長引数(Spread operator)といい、n個のプロパティがあることを指します
-          // 実際にはdayClick(date, jsEvent, view)となりますが、省略して「...args」と書くことも出来ます
-          self.$emit('day-click', ...args);
-        },
-
-        // 日付、時刻要素のクリックイベント処理
-        select(start, end, jsEvent, view, resource) {
-          self.$emit('event-created', {
-            start,
-            end,
-            allDay: !start.hasTime() && !end.hasTime(),
-            view,
-            resource,
-          });
-        },
-      };
-    },
-  },
 
   /**
-   * vue mounted
+   * 親コンポーネントからこのメソッドを呼び出すことでfullcalendarの処理呼び出しを行えるようにする
+   * 親コンポーネントから
+   * <Calendar ref="calendar" />
+   * と定義したカレンダーに対してビジネスロジックで
+   * this.$refs.calendar.fireMethod("next")
+   * と呼び出す
+   *
+   * TODO Typescript化してから実験する
    */
-  mounted() {
-    const cal = $(this.$el);
-    // ここでselfにthisを代入すると、webpackのclient.jsでsendMsg()の処理でself.postMessage()がこけるのでコメントアウト
-    // さらに、mounted()内でselfは使わない
-    // self = this;
+  public fireMethod(...options: any[]) {
+    return $(this.$el).fullCalendar(...options);
+  }
 
-    this.$on('remove-event', (event) => {
-      if (event && event.hasOwnProperty('id')) {
-        $(this.$el).fullCalendar('removeEvents', event.id);
+  /**
+   * vue lifecycle mounted
+   */
+  private mounted(): void {
+    this.$on("remove-event", (event: any) => {
+      if (event && event.hasOwnProperty("id")) {
+        $(this.$el).fullCalendar("removeEvents", event.id);
       } else {
-        $(this.$el).fullCalendar('removeEvents', event);
+        $(this.$el).fullCalendar("removeEvents", event);
       }
     });
 
-    this.$on('rerender-events', () => {
-      $(this.$el).fullCalendar('rerenderEvents');
+    this.$on("rerender-events", () => {
+      $(this.$el).fullCalendar("rerenderEvents");
     });
 
-    this.$on('refetch-events', () => {
-      $(this.$el).fullCalendar('refetchEvents');
+    this.$on("refetch-events", () => {
+      $(this.$el).fullCalendar("refetchEvents");
     });
 
-    this.$on('render-event', (event) => {
-      $(this.$el).fullCalendar('renderEvent', event);
+    this.$on("render-event", (event: any) => {
+      $(this.$el).fullCalendar("renderEvent", event);
     });
 
-    this.$on('reload-events', () => {
-      $(this.$el).fullCalendar('removeEvents');
-      $(this.$el).fullCalendar('addEventSource', this.events);
+    this.$on("reload-events", () => {
+      $(this.$el).fullCalendar("removeEvents");
+      $(this.$el).fullCalendar("addEventSource", this.events);
     });
 
-    this.$on('rebuild-sources', () => {
-      $(this.$el).fullCalendar('removeEventSources');
+    this.$on("rebuild-sources", () => {
+      $(this.$el).fullCalendar("removeEventSources", "");
       this.eventSources.map((event) => {
-        $(this.$el).fullCalendar('addEventSource', event);
+        $(this.$el).fullCalendar("addEventSource", event);
       });
     });
 
     // カレンダーのhtmlが作られるのはcal.fullCalendar()
     // 表示状態でカレンダーが作られると、後続処理のCSS調整で瞬間的にチラつきが発生するので、
     // 非表示状態でカレンダーを作る
-    $('#calendar').hide();
-    cal.fullCalendar(defaultsDeep(this.config, this.defaultConfig));
+    $("#calendar").hide();
+
+    const configs: any = defaultsDeep(this.config, this.defaultConfig);
+    $(this.$el).fullCalendar(configs);
 
     // CSS調整 CSSクラス追加
     for (const rm of this.removeCssClass) {
@@ -269,71 +130,154 @@ export default {
     }
 
     // CSS調整が終わったのでカレンダーを表示する
-    $('#calendar').show();
-  },
+    $("#calendar").show();
+  }
 
   /**
-   * vue methods
+   * vue lifecycle beforeDestroy
    */
-  methods: {
-    /**
-     * 親コンポーネントからこのメソッドを呼び出すことでfullcalendarの処理呼び出しを行えるようにする
-     * 親コンポーネントから
-     * <Calendar ref="calendar" />
-     * と定義したカレンダーに対してビジネスロジックで
-     * this.$refs.calendar.fireMethod('next')
-     * と呼び出す
-     *
-     * TODO Typescript化してから実験する
-     */
-    fireMethod(...options) {
-      return $(this.$el).fullCalendar(...options);
-    },
-  },
+  private beforeDestroy(): void {
+    this.$off("remove-event");
+    this.$off("rerender-events");
+    this.$off("refetch-events");
+    this.$off("render-event");
+    this.$off("reload-events");
+    this.$off("rebuild-sources");
+  }
+
+  /**
+   * FullCalendar設定情報返却
+   */
+  get defaultConfig(): any {
+
+    const configs: any = {
+      header: this.header,
+      footer: this.footer,
+      customButtons: this.customButtons,
+      defaultView: this.defaultView,
+      editable: this.editable,
+      selectable: this.selectable,
+      selectHelper: this.selectHelper,
+      aspectRatio: 2,
+      timeFormat: "HH:mm",
+      events: this.events,
+      eventSources: this.eventSources,
+      /** FullCalendarが呼び出すメソッドを渡す */
+      eventRender: this.eventRender,
+      viewRender: this.viewRender,
+      eventDestroy: this.eventDestroy,
+      eventClick: this.eventClick,
+      eventDrop: this.eventDrop,
+      eventReceive: this.eventReceive,
+      eventResize: this.eventResize,
+      eventDragStart: this.eventDragStart,
+      eventDragStop: this.eventDragStop,
+      dayClick: this.dayClick,
+      select: this.select,
+    };
+
+    return configs;
+  }
+
+  private eventRender(...args: any[]): void {
+    if (this.sync) {
+      this.events = $(this.$el).fullCalendar("clientEvents", {});
+    }
+    this.$emit("event-render", ...args);
+    return;
+  }
+
+  private viewRender(...args: any[]): void {
+    if (this.sync) {
+      this.events = $(this.$el).fullCalendar("clientEvents", {});
+    }
+    this.$emit("view-render", ...args);
+    return;
+  }
+
+  private eventDestroy(event: any[]): void {
+    if (this.sync) {
+      this.events = $(this.$el).fullCalendar("clientEvents", {});
+    }
+    return;
+  }
+
+  @Emit("event-drag-start")
+  private eventDragStart(...args: any[]): void { return; }
+
+  /**
+   * 予定要素のクリックイベント処理
+   * #topic
+   * 条件分岐がなく、$emitするだけなのであれば、簡略化して書ける。
+   */
+  @Emit("event-selected")
+  private eventClick(...args: any[]): void { return; }
+
+  @Emit("event-drop")
+  private eventDrop(...args: any[]): void { return; }
+
+  @Emit("event-receive")
+  private eventReceive(...args: any[]): void { return; }
+
+  @Emit("event-resize")
+  private eventResize(...args: any[]): void { return; }
+
+  @Emit("event-drag-stop")
+  private eventDragStop(...args: any[]): void { return; }
+
+  /**
+   * 日付要素のクリックイベント処理
+   * #topic
+   * 親コンポーネントから渡されたdayClick()をコールする
+   * 親コンポーネントから@day-click="dayClick"でメソッドを渡さないといけないので注意
+   */
+  private dayClick(...args: any[]): void {
+    // #topic
+    // 「...args」は可変長引数(Spread operator)といい、n個のプロパティがあることを指します
+    // 実際にはdayClick(date, jsEvent, view)となりますが、省略して「...args」と書くことも出来ます
+    this.$emit("day-click", ...args);
+    return;
+  }
+
+  /**
+   * 日付、時刻要素のクリックイベント処理
+   */
+  private select(start: any, end: any, jsEvent: any, view: any, resource: any): void {
+    this.$emit("event-created", {
+      start,
+      end,
+      allDay: !start.hasTime() && !end.hasTime(),
+      view,
+      resource,
+    });
+    return;
+  }
 
   /**
    * 値の監視
    */
-  watch: {
-    // 表示するイベント(予定)の監視
-    // 親コンポーネントからprops経由で渡されたイベント(予定)を監視している
-    events: {
-      deep: true,
-      // #topic
-      // 親コンポーネントでeventsを変更すればhandler()が呼ばれる
-      // 引数のvalには変更後のeventsが格納されている
-      // イベントをすべて消し、変更後のeventsを入れ直して再描画させる
-      handler(val) {
-        $(this.$el).fullCalendar('removeEvents');
-        $(this.$el).fullCalendar('addEventSource', this.events);
-      },
-    },
-    eventSources: {
-      deep: true,
-      handler(val) {
-        this.$emit('rebuild-sources');
-      },
-    },
-  },
+  @Watch("events", { deep: true })
+  private onEventsChange(newEvents: any[], oldEvents: any[]): void {
+    $(this.$el).fullCalendar("removeEvents");
+    $(this.$el).fullCalendar("addEventSource", newEvents);
+    return;
+  }
 
   /**
-   * インスタンス削除前イベント処理
+   * 値の監視
    */
-  beforeDestroy() {
-    this.$off('remove-event');
-    this.$off('rerender-events');
-    this.$off('refetch-events');
-    this.$off('render-event');
-    this.$off('reload-events');
-    this.$off('rebuild-sources');
-  },
-};
+  @Watch("eventSources")
+  private onEventSourcesChange(): void {
+    this.$emit("rebuild-sources");
+    return;
+  }
+}
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="sass">
 // #topic
 // node_modulesのCSSを使用したい場合はimportで対応する。
-@import '../../node_modules/fullcalendar/dist/fullcalendar.css'
-@import '../../node_modules/@fortawesome/fontawesome-free/css/all.css'
+@import "../../node_modules/fullcalendar/dist/fullcalendar.css"
+@import "../../node_modules/@fortawesome/fontawesome-free/css/all.css"
 </style>

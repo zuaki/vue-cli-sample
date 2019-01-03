@@ -18,11 +18,11 @@ export class WorkTime {
   public workType: string;
 
   constructor() {
-    this.date = '';
-    this.startTime = '';
-    this.endTime = '';
-    this.memo = '';
-    this.workType = '';
+    this.date = "";
+    this.startTime = "";
+    this.endTime = "";
+    this.memo = "";
+    this.workType = "";
   }
 
   public setWorkTime(

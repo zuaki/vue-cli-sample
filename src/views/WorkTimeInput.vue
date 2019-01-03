@@ -17,24 +17,24 @@
   // #topic
   // 子コンポーネントにv-modelをつけると、親子間でプロパティを双方向バインディングできる
   // 今回モーダルは1つのコンポーネントを使いまわすので、値の書換えを親から実行するため使用する
-  WorkTimeModal(:work-type-map="workTypeMap" ref="modal" @add-event="addEvent" @delete-event="deleteEvent" @cancel-event="cancelEvent")
+  WorkTimeModal(:default-start-time="defaultStartTime" :default-end-time="defaultEndTime" ref="modal" @add-event="addEvent" @delete-event="deleteEvent" @cancel-event="cancelEvent")
 </template>
 
-<script lang='ts'>
-import { Component, Vue } from 'vue-property-decorator';
-import Bootstrap from 'bootstrap';
-import { ModalOption } from 'bootstrap';
-import { Event } from '@/model/Event';
-import { DateUtility as dUtil } from '@/utility/DateUtility';
-import { WorkTimeCheckAny } from '@/utility/WorkTimeCheckAny';
-import { IWorkTimeCheck } from '@/utility/IWorkTimeCheck';
-import Calendar from '@/components/Calendar.vue'; // @ is an alias to /src
-import WorkTimeModal from '@/components/WorkTimeModal.vue';
-import Navigation from '@/components/Navigation.vue';
-import { WorkTime } from '@/model/WorkTime';
-import { WorkTimeCheckError } from '@/model/WorkTimeCheckError';
-import { WorkTimeConstants as wConst } from '@/constants/WorkTime';
-import { unix } from 'moment';
+<script lang="ts">
+import { Component, Vue } from "vue-property-decorator";
+import Bootstrap from "bootstrap";
+import { ModalOption } from "bootstrap";
+import { WorkTimeConstants as wConst } from "@/constants/WorkTime";
+import { Event } from "@/model/Event";
+import { WorkTime } from "@/model/WorkTime";
+import { WorkTimeCheckError } from "@/model/WorkTimeCheckError";
+import { DateUtility as dUtil } from "@/utility/DateUtility";
+import { WorkTimeCheckAny } from "@/utility/WorkTimeCheckAny";
+import { IWorkTimeCheck } from "@/utility/IWorkTimeCheck";
+import Calendar from "@/components/Calendar.vue";
+import WorkTimeModal from "@/components/WorkTimeModal.vue";
+import Navigation from "@/components/Navigation.vue";
+import { unix } from "moment";
 
 /**
  * 勤怠入力カレンダーコンポーネント
@@ -62,20 +62,20 @@ export default class WorkTimeInput extends Vue {
 
   /** 勤怠チェック処理は作業場毎に異なるので勤怠チェック実行クラスをMAPで持つ */
   private readonly workTimeCheckMap: Map<string, IWorkTimeCheck> = new Map([
-    ['0', new WorkTimeCheckAny()],
+    ["0", new WorkTimeCheckAny()],
   ]);
 
   // TODO この2つはREST APIから取得したほうが便利かも？
   /** 始業時刻定数値 */
-  private readonly defaultStartTime: string = '09:00';
+  private readonly defaultStartTime: string = "09:00";
   /** 就業時刻定数値 */
-  private readonly defaultEndTime: string = '18:00';
+  private readonly defaultEndTime: string = "18:00";
 
   /*******************************************
    * カレンダーコンポーネントに渡す設定値
    *******************************************/
   /** カレンダー表示形式 */
-  private viewType: string = 'month';
+  private viewType: string = "month";
 
   /** 選択可否 */
   private selectable: boolean = false;
@@ -85,23 +85,29 @@ export default class WorkTimeInput extends Vue {
 
   /** フッター */
   private footer: object = {
-    left: '',
-    center: '',
-    right: 'inputAllDefaultBtn exportExcel',
+    left: "",
+    center: "",
+    right: "inputAllDefaultBtn allCrearBtn exportExcel",
   };
 
   /** カスタムボタン */
   private customButtons: object = {
     inputAllDefaultBtn: {
-      text: '定時一括入力',
+      text: "定時一括入力",
       click: () => {
         this.inputAllDefault();
       },
     },
-    exportExcel: {
-      text: 'Excel出力',
+    allCrearBtn: {
+      text: "一括クリア",
       click: () => {
-        alert('clicked the custom button!');
+        this.allCrear();
+      },
+    },
+    exportExcel: {
+      text: "Excel出力",
+      click: () => {
+        alert("clicked the custom button!");
       },
     },
   };
@@ -109,58 +115,66 @@ export default class WorkTimeInput extends Vue {
   /** その他の設定情報 */
   private config: object = {
     // ロケーション
-    locale: 'ja',
+    locale: "ja",
     // 終了時刻表示の有効/無効
     displayEventEnd: true,
     // BOOTSTRAP4テーマで描画する
-    themeSystem: 'bootstrap4',
+    themeSystem: "bootstrap4",
   };
 
   /** CSS調整用 class追加 */
   private addCssClass: object[] = [
     {
-      selector: '.fc-today-button',
-      class: 'btn-gray-primary',
+      selector: ".fc-today-button",
+      class: "btn-gray-primary",
     },
     {
-      selector: '.fc-prev-button',
-      class: 'btn-gray-primary',
+      selector: ".fc-prev-button",
+      class: "btn-gray-primary",
     },
     {
-      selector: '.fc-next-button',
-      class: 'btn-gray-primary',
+      selector: ".fc-next-button",
+      class: "btn-gray-primary",
     },
     {
-      selector: '.fc-inputAllDefaultBtn-button',
-      class: 'btn-gray-primary',
+      selector: ".fc-inputAllDefaultBtn-button",
+      class: "btn-gray-primary",
     },
     {
-      selector: '.fc-exportExcel-button',
-      class: 'btn-gray-primary',
+      selector: ".fc-allCrearBtn-button",
+      class: "btn-gray-primary",
+    },
+    {
+      selector: ".fc-exportExcel-button",
+      class: "btn-gray-primary",
     },
   ];
 
   /** CSS調整用 class削除 */
   private removeCssClass: object[] = [
     {
-      selector: '.fc-today-button',
-      class: 'btn-primary',
+      selector: ".fc-today-button",
+      class: "btn-primary",
     },
     {
-      selector: '.fc-prev-button',
-      class: 'btn-primary',
+      selector: ".fc-prev-button",
+      class: "btn-primary",
     },
     {
-      selector: '.fc-next-button',
-      class: 'btn-primary',
+      selector: ".fc-next-button",
+      class: "btn-primary",
     },
     {
-      selector: '.fc-inputAllDefaultBtn-button',
-      class: 'btn-primary',
+      selector: ".fc-inputAllDefaultBtn-button",
+      class: "btn-primary",
     },
     {
-      selector: '.fc-exportExcel-button',
-      class: 'btn-primary',
+      selector: ".fc-allCrearBtn-button",
+      class: "btn-primary",
+    },
+    {
+      selector: ".fc-exportExcel-button",
+      class: "btn-primary",
     },
   ];
 
@@ -185,7 +199,7 @@ export default class WorkTimeInput extends Vue {
    */
   private created(): void {
     // TODO 勤怠チェック種別はAPIから取得できるようにする
-    this.workTimeCheckType = '0';
+    this.workTimeCheckType = "0";
     this.initTempProperty();
 
     return;
@@ -195,7 +209,7 @@ export default class WorkTimeInput extends Vue {
    * ダイアログ等で使用する一時使用プロパティの初期化
    */
   private initTempProperty(): void {
-    this.workTime.setWorkTime('', this.defaultStartTime, this.defaultEndTime, '', '0');
+    this.workTime.setWorkTime("", this.defaultStartTime, this.defaultEndTime, "", "0");
 
     return;
   }
@@ -368,9 +382,40 @@ export default class WorkTimeInput extends Vue {
       }
 
       if (date.getDay() !== 0 && date.getDay() !== 6) {
-        const event: Event = this.createEvent('0', dateStr, this.defaultStartTime, this.defaultEndTime, '');
+        const event: Event = this.createEvent("0", dateStr, this.defaultStartTime, this.defaultEndTime, "");
         this.events.push(event);
+
+        // TODO REST SPIをコールしてその日付の情報を追加
       }
+    }
+
+    return;
+  }
+
+  /**
+   * 一括クリア
+   * 現在ページの勤怠を一括クリアする
+   */
+  private allCrear(): void {
+    // 月の日数を調べる場合、指定した月の次の月の0日目は, 指定した月の最終日が返ってくる
+    const today: Date = new Date();
+    const year: number = today.getFullYear();
+    const month: number = today.getMonth();
+    const dayLength: number = new Date(year, month + 1, 0).getDate();
+
+    for (let i = 1; i < dayLength + 1; i++) {
+      // イベント削除用に0埋めした年月日の文字列を作る
+      const date: Date = new Date(year, month, i);
+      const dateStr = dUtil.createFullDateString(date);
+
+      const index: number | undefined = this.getEventIndex(dateStr);
+      if (index === undefined) {
+        continue;
+      }
+
+      this.events.splice(index, 1);
+
+      // TODO REST SPIをコールしてその日付の情報を削除
     }
 
     return;

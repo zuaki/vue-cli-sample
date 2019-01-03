@@ -1,34 +1,35 @@
 <template lang="pug">
-#user
+#user.container-fluid
   .row
-    .col-lg-3.col-md-6.col-sm-12
+    .col-sm-6.col-12
       // input UserId
       label(for="id") 社員番号
-      .input-group
+      .input-group.default-input
         .input-group-prepend
           .input-group-text
             .fas.fa-id-card
         input#id.form-control(type="text" v-model:value="id" readonly)
-    .col-lg-3.col-md-6.col-sm-12
+    .col-sm-6.col-12
       // input UserName
       label(for="name") 氏名
-      .input-group
+      .input-group.default-input
         .input-group-prepend
           .input-group-text
             .fas.fa-user
         input#name.form-control(type="text" v-model:value="name" readonly)
-    .col-lg-3.col-md-6.col-sm-12
+  .row
+    .col-sm-6.col-12
       // input UserName
       label(for="name") 氏名
-      .input-group
+      .input-group.default-input
         .input-group-prepend
           .input-group-text
             .fas.fa-user
         input#name.form-control(type="text" v-model:value="name" readonly)
-    .col-lg-3.col-md-6.col-sm-12
+    .col-sm-6.col-12
       // input UserName
       label(for="name") 氏名
-      .input-group
+      .input-group.default-input
         .input-group-prepend
           .input-group-text
             .fas.fa-user
@@ -36,8 +37,8 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator';
-import Navigation from '@/components/Navigation.vue';
+import { Component, Prop, Vue } from "vue-property-decorator";
+import Navigation from "@/components/Navigation.vue";
 
 @Component({
   components: {
@@ -71,4 +72,7 @@ export default class User extends Vue {
   text-align: left
   .row
     margin-bottom: 0.5rem
+
+.default-input
+  max-width: 289px
 </style>

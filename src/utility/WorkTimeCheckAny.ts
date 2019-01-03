@@ -1,6 +1,6 @@
-import { IWorkTimeCheck } from '@/utility/IWorkTimeCheck';
-import { Event } from '@/model/Event';
-import { WorkTimeCheckError } from '@/model/WorkTimeCheckError';
+import { IWorkTimeCheck } from "@/utility/IWorkTimeCheck";
+import { Event } from "@/model/Event";
+import { WorkTimeCheckError } from "@/model/WorkTimeCheckError";
 
 /**
  * 勤怠チェック
@@ -30,7 +30,7 @@ export class WorkTimeCheckAny implements IWorkTimeCheck {
   public checkDay(event: Event): WorkTimeCheckError[] | undefined {
     /* 勤怠エラー確認用のデバッグコード
     let errors: WorkTimeCheckError[] = [];
-    errors.push(new WorkTimeCheckError('error', undefined, 'propertyName'));
+    errors.push(new WorkTimeCheckError("error", undefined, "propertyName"));
     return errors;
     */
 

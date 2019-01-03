@@ -12,7 +12,7 @@ export class Event {
   public endTime: string;
   public memo: string;
 
-  private readonly defaultColor: string = '#0000FF';
+  private readonly defaultColor: string = "#0000FF";
 
   /**
    * コンストラクタ

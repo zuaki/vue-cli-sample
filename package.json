@@ -24,7 +24,9 @@
   "devDependencies": {
     "@types/bootstrap": "^4.1.2",
     "@types/chai": "^4.1.0",
+    "@types/fullcalendar": "^3.8.0",
     "@types/jquery": "^3.3.22",
+    "@types/lodash.defaultsdeep": "^4.6.4",
     "@types/mocha": "^5.2.4",
     "@vue/cli-plugin-babel": "^3.1.1",
     "@vue/cli-plugin-pwa": "^3.1.1",

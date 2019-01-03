@@ -1,6 +1,6 @@
-import Vue from 'vue';
-import Vuex from 'vuex';
-import LoginModel from '@/model/Login';
+import Vue from "vue";
+import Vuex from "vuex";
+import LoginModel from "@/model/Login";
 
 // ログイン認証で使用するため、vuexをVueに取り込む
 Vue.use(Vuex);
@@ -24,7 +24,7 @@ export default new Vuex.Store({
     login: (context, params: LoginModel) => {
       // TODO ここでAPI呼び出してログイン処理をする
       // ログイン成功なら、mutationsのlogin()を呼び出す
-      context.commit('login');
+      context.commit("login");
 
       // #topic
       // ログイン結果を返したいのであれば、ここでreturnできる
@@ -32,7 +32,7 @@ export default new Vuex.Store({
       return true;
     },
     logout: (context) => {
-      context.commit('logout');
+      context.commit("logout");
       return true;
     },
   },
